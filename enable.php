@@ -85,6 +85,7 @@ $settings = array(
 		'message_empty_password' => '<p>Please add a password</p>',
 		'message_empty_password_confirm' => '<p>Please confirm your password</p>',
 		'message_empty_member_no' => '<p>Please tell us your membership number</p>',
+		'message_empty_member_postcode' => '<p>Please tell us your post code</p>',
 		'message_notvalid_password' => '<p>Those passwords don\'t match!</p>',
 		'message_notvalid_username' => '<p>Sorry, that username is taken!</p>',
 		'message_notvalid_email' => '<p>Sorry, someone at that email address already has an account!</p>',
