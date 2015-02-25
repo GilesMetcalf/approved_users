@@ -83,7 +83,10 @@ class ApprovedUser {
                 $username = $_POST['username'];
                 $password = $_POST['password'];
                 $confirm_pass = $_POST['confirm_pass'];
+				
+				// New fields for membership number and post code
                 $member_no = $_POST['member_no'];
+				$member_post_code = $_POST['member_post_code'];
 
                 $met = $settings["message_error_technical"];
                 $message_empty_name = $settings["message_empty_name"];
@@ -94,7 +97,11 @@ class ApprovedUser {
                 $message_notvalid_password = $settings["message_notvalid_password"];
                 $message_notvalid_username = $settings["message_notvalid_username"];
                 $message_notvalid_email = $settings["message_notvalid_email"];
+				
+				//New validation messages for membership number and postcode
                 $message_empty_member_no = $setting["message_empty_member_no"];
+                $message_empty_member_postcode = $setting["message_empty_member_postcode"];
+				
                 $type = $settings["random_key_type"];
                 $len = $settings["random_key_length"];
 
@@ -106,6 +113,8 @@ class ApprovedUser {
                     echo $message_empty_username;
                 } elseif (empty($_POST['member_no'])) {
                     echo $message_empty_member_no;
+                } elseif (empty($_POST['member_post_code'])) {
+                    echo $message_empty_member_postcode;
                 } elseif (empty($_POST['password'])) {
                     echo $message_empty_password;
                 } elseif (empty($_POST['confirm_pass'])) {
@@ -153,7 +162,7 @@ class ApprovedUser {
                             $random_key = $common->random_string($type, $len);
                             //$password = sha1($password);
                             $today = date('Y-m-d G:i:s');
-                            $sql = "INSERT INTO " . TABLE_PREFIX . "approved_users_temp (name, email, username, member_no, password, rand_key, reg_date) VALUES (:name, :email, :username , :member_no, :password, :random_key, :today)";
+                            $sql = "INSERT INTO " . TABLE_PREFIX . "approved_users_temp (name, email, username, member_no, post_code, password, rand_key, reg_date) VALUES (:name, :email, :username , :member_no, :post_code, :password, :random_key, :today)";
                             $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                             $stmt = $PDO->prepare($sql);
                             $stmt->execute(array(
@@ -161,6 +170,7 @@ class ApprovedUser {
                                 "email" => $email,
                                 "username" => $username,
                                 "member_no" => $member_no,
+								"post_code" => $member_post_code,
                                 "password" => $password,
                                 "random_key" => $random_key,
                                 "today" => $today
