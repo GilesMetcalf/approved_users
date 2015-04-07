@@ -20,6 +20,7 @@
 
 <!-- New button for the Approvals tab -->
 <p class="button"><a href="<?php echo get_url('plugin/approved_users/approvals'); ?>"><img src="<?php echo PLUGINS_URI; ?>approved_users/images/approvals.png" align="middle"><?php echo __('Approvals');?></a></p>
+<p class="button"><a href="<?php echo get_url('plugin/approved_users/approvals'); ?>"><img src="<?php echo PLUGINS_URI; ?>approved_users/images/approvals.png" align="middle"><?php echo __('Load Fast Register');?></a></p>
 <p class="button"><a href="<?php echo get_url('user'); ?>"><img src="<?php echo PLUGINS_URI; ?>approved_users/images/user.png" align="middle"><?php echo __('Users');?></a></p>
 <p class="button"><a href="<?php echo get_url('plugin/approved_users/settings'); ?>"><img src="<?php echo ICONS_URI; ?>settings-32-ns.png" align="middle"><?php echo __('Settings');?></a></p>
 <p class="button"><a href="<?php echo get_url('plugin/approved_users/documentation'); ?>"><img src="<?php echo ICONS_URI; ?>documentation-32-ns.png" align="middle"><?php echo __('Documentation');?></a></p>
