@@ -55,7 +55,7 @@ return array(
     'Page' => 'Page',
     'Approvals' => 'Approvals',
     'Membership No.' => 'Membership No.',
-	'Postcode' => 'Postcode',
+    'Postcode' => 'Postcode',
     'Code' => 'Code',
     'Notes' => 'Notes',
     'Add User Group' => 'Add User Group',
@@ -69,5 +69,6 @@ return array(
     'Log in' => 'Log in',
     'Stay logged in' => 'Stay logged in',
     'Approvals processed' => 'Approvals processed',
-    'Unable to process approvals' => 'Unable to process approvals'
+    'Unable to process approvals' => 'Unable to process approvals',
+    'Load FastRegister Database' => 'Load FastRegister Database'
 );
