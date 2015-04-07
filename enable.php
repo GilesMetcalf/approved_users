@@ -45,7 +45,7 @@ if ($driver == 'mysql') {
                     `rand_key` varchar(32) default NULL,
                     `reg_date` varchar(40) default NULL,
                     `member_no` varchar(15) default NULL,
-					`post_code` varchar(15) default NULL,
+		    `post_code` varchar(15) default NULL,
                     `processed` int default 0,
                     PRIMARY KEY  (`id`),
                     UNIQUE KEY `username` (`username`),
@@ -56,6 +56,12 @@ if ($driver == 'mysql') {
     $PDO->exec("CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "permission_page` (
                     `page_id` int(25) default NULL,
                     `permission_id` int(25) default NULL
+                ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+                ");
+
+    $PDO->exec("CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "fast_register` (
+		`member_no` varchar(15) default NULL,
+		`post_code` varchar(15) default NULL,
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
                 ");
 
