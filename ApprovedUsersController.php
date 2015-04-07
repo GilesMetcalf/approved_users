@@ -65,6 +65,11 @@ class ApprovedUsersController extends PluginController {
         $this->display('approved_users/views/approvals');
     }
 
+	// GM - New function here to show the "Fast Register" administrative page
+   function fast_register_load() {
+        $this->display('approved_users/views/fastregister');
+    }
+
      function statistics() {
         $this->display('approved_users/views/statistics');
     }
