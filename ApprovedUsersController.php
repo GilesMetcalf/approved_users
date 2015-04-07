@@ -130,6 +130,46 @@ class ApprovedUsersController extends PluginController {
         redirect(get_url('plugin/approved_users/approvals'));
    }
 
+/**
+* GM - This function is called from the Fast Register Load page
+*
+* This is where we have loaded a CSV file of FR update data, and we are now going to load that into the database
+*
+* TODO: Additional validation
+*
+**/
+public function fastregisterload() {
+	$PDO = Record::getConnection();
+	$common = new APCommon();
+	$target_dir = "uploads/";
+	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+	$uploadOk = 1;
+
+	$row = 1;
+	if (($handle = fopen($target_file, "r")) !== FALSE) {
+		while (($data = fgetcsv($handle, 25, ",")) !== FALSE) {
+    			$num = count($data);
+    			if ($num > 0) {
+				$sql = "TRUNCATE " . TABLE_PREFIX . "fast_register";
+				$stmt = $PDO->prepare($sql);
+				$stmt->execute();	
+			}
+    			$row++;
+    			for ($c=0; $c < $num; $c++) {
+        			$sql = "INSERT INTO " . TABLE_PREFIX . "fast_register (member_no, post_code) VALUES ("{$data[0]}", "{$data[1]}")";
+				$stmt = $PDO->prepare($sql);
+				$stmt->execute();	
+    			}
+		}
+		Flash::set('success', __('Updates processed'));
+	} else {
+		Flash::set('error', __('Unable to process updates'));
+	}
+	fclose($handle);
+	redirect(get_url('plugin/approved_users/approvals'));
+}
+
+
     public function add_user_group() {
         $new_group = trim($_POST['new_group']);
         if (isset($_POST['default']))
