@@ -56,154 +56,153 @@ class ApprovedUser {
     }
 
 
-    public function registration_page() {
-
-        $settings = Plugin::getAllSettings("approved_users");
-        $al = $settings['allow_login'];
-        //$lf = $settings['login_form'];
-        $cl = $settings['login_closed_message'];
-        //$rp = $row['register_page'];
-        $rp = new View('../../plugins/approved_users/views/registration');
-        $ali = $settings['already_logged_in'];
-        $len = $settings['random_key_length'];
-        $type = $settings['random_key_type'];
-
-        if (AuthUser::isLoggedIn()) {
-            echo $ali;
-        } else {
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-                // This is a quick bit of PHP form validation - I'd recommend some nice Javascript validation in addition if you can be bothered :)
-                // Double the importance if you're capturing extra fields on signup...
-                global $__CMS_CONN__;
-
-                $PDO = Record::getConnection();
-                $name = $_POST['name'];
-                $email = $_POST['email'];
-                $username = $_POST['username'];
-                $password = $_POST['password'];
-                $confirm_pass = $_POST['confirm_pass'];
-				
-				// New fields for membership number and post code
-                $member_no = $_POST['member_no'];
-				$member_post_code = $_POST['member_post_code'];
-
-                $met = $settings["message_error_technical"];
-                $message_empty_name = $settings["message_empty_name"];
-                $message_empty_email = $settings["message_empty_email"];
-                $message_empty_username = $settings["message_empty_username"];
-                $message_empty_password = $settings["message_empty_password"];
-                $message_empty_password_confirm = $settings["message_empty_password_confirm"];
-                $message_notvalid_password = $settings["message_notvalid_password"];
-                $message_notvalid_username = $settings["message_notvalid_username"];
-                $message_notvalid_email = $settings["message_notvalid_email"];
-				
-				//New validation messages for membership number and postcode
-                $message_empty_member_no = $setting["message_empty_member_no"];
-                $message_empty_member_postcode = $setting["message_empty_member_postcode"];
-				
-                $type = $settings["random_key_type"];
-                $len = $settings["random_key_length"];
-
-                if (empty($_POST['name'])) {
-                    echo $message_empty_name;
-                } elseif (empty($_POST['email'])) {
-                    echo $message_empty_email;
-                } elseif (empty($_POST['username'])) {
-                    echo $message_empty_username;
-                } elseif (empty($_POST['member_no'])) {
-                    echo $message_empty_member_no;
-                } elseif (empty($_POST['member_post_code'])) {
-                    echo $message_empty_member_postcode;
-                } elseif (empty($_POST['password'])) {
-                    echo $message_empty_password;
-                } elseif (empty($_POST['confirm_pass'])) {
-                    echo $message_empty_password_confirm;
-                } elseif (($_POST['password']) != ($_POST['confirm_pass'])) {
-                    echo $message_notvalid_password;
-                } else {
-                    // Check for unique username
-                    $PDO = Record::getConnection();
-
-                    // Check User Table
-                    $check_unique_username = "SELECT * FROM " . TABLE_PREFIX . "user WHERE username=:username";
-                    $result = $PDO->prepare($check_unique_username);
-                    $result->execute(array("username" => $username));
-                    $count = $result->rowCount();
-
-                    // Check Temp User Table
-                    $check_unique_username_temp = "SELECT * FROM " . TABLE_PREFIX . "approved_users_temp WHERE username=:username";
-                    $check_unique_username_temp = $PDO->prepare($check_unique_username_temp);
-                    $check_unique_username_temp->execute(array("username" => $username));
-                    $check_unique_username_temp = $check_unique_username_temp->rowCount();
-
-                    if ($count == '1' || $check_unique_username_temp == '1') {
-                        echo $message_notvalid_username;
-                    } else {
-                        // We want to make sure that email isn't already registered
-                        global $__CMS_CONN__;
-
-                        // Check in Main User Table
-                        $check_unique_email = "SELECT * FROM " . TABLE_PREFIX . "user WHERE email=:email";
-                        $result = $PDO->prepare($check_unique_email);
-                        $result->execute(array("email" => $email));
-                        $count = $result->rowCount();
-
-                        // Check Temp User Table
-                        $check_unique_email_temp = "SELECT * FROM " . TABLE_PREFIX . "approved_users_temp WHERE email=:email";
-                        $check_unique_email_temp = $PDO->prepare($check_unique_email_temp);
-                        $check_unique_email_temp->execute(array("email" => $email));
-                        $check_unique_email_temp = $check_unique_email_temp->rowCount();
-
-                        if ($count == 1 || $check_unique_email_temp == 1) {
-                            echo $message_notvalid_email;
-                        } else {
-                            $common = new APCommon();
-                            $random_key = $common->random_string($type, $len);
-                            //$password = sha1($password);
-                            $today = date('Y-m-d G:i:s');
-                            $sql = "INSERT INTO " . TABLE_PREFIX . "approved_users_temp (name, email, username, member_no, post_code, password, rand_key, reg_date) VALUES (:name, :email, :username , :member_no, :post_code, :password, :random_key, :today)";
-                            $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                            $stmt = $PDO->prepare($sql);
-                            $stmt->execute(array(
-                                "name" => $name,
-                                "email" => $email,
-                                "username" => $username,
-                                "member_no" => $member_no,
-								"post_code" => $member_post_code,
-                                "password" => $password,
-                                "random_key" => $random_key,
-                                "today" => $today
-                            ));
-                            // $common->confirmation_email($email, $name);
-                                $register_confirm_msg = $settings['register_confirm_msg'];
-                            echo $register_confirm_msg;
-                        }
-                    }
-                }
-            } else {
-                $register_page = $settings['register_page'];
-                echo '<form id="registration" class="registration" action="' . URL_PUBLIC . '' . $register_page . '' . URL_SUFFIX . '" method="post">';
-
-                $ar = $settings['allow_registrations'];
-                $met = $settings['message_error_technical'];
-                $cm = $settings['closed_message'];
-                //$rf = $row['registration_form'];
-                $rf = new View('../../plugins/approved_users/views/registration');
-                // Check the registration status
-                if ($ar == '1') { // if registration is Open
-                    echo $rf; // Show Registration Form
-                } elseif ($ar == '0') { // if registration is Closed
-                    echo $cm; // Show Closed Shop Message - useful for testing with closed set of users
-                } else { // You will get this message if the allow_registration row in the registration_settings table value does not equal 1 (open) or 0 (closed)
-                    echo $met;
-                }
-
-
-                echo '</form>';
-            }
-        }
-    }
+public function registration_page() {
+	$settings = Plugin::getAllSettings("approved_users");
+	$al = $settings['allow_login'];
+	//$lf = $settings['login_form'];
+	$cl = $settings['login_closed_message'];
+	//$rp = $row['register_page'];
+	$rp = new View('../../plugins/approved_users/views/registration');
+	$ali = $settings['already_logged_in'];
+	$len = $settings['random_key_length'];
+	$type = $settings['random_key_type'];
+	if (AuthUser::isLoggedIn()) {
+		echo $ali;
+	} else {
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		// This is a quick bit of PHP form validation - I'd recommend some nice Javascript validation in addition if you can be bothered :)
+		// Double the importance if you're capturing extra fields on signup...
+		global $__CMS_CONN__;
+		$PDO = Record::getConnection();
+		$name = $_POST['name'];
+		$email = $_POST['email'];
+		$username = $_POST['username'];
+		$password = $_POST['password'];
+		$confirm_pass = $_POST['confirm_pass'];
+		// New fields for membership number and post code
+		$member_no = $_POST['member_no'];
+		$member_post_code = $_POST['member_post_code'];
+		$met = $settings["message_error_technical"];
+		$message_empty_name = $settings["message_empty_name"];
+		$message_empty_email = $settings["message_empty_email"];
+		$message_empty_username = $settings["message_empty_username"];
+		$message_empty_password = $settings["message_empty_password"];
+		$message_empty_password_confirm = $settings["message_empty_password_confirm"];
+		$message_notvalid_password = $settings["message_notvalid_password"];
+		$message_notvalid_username = $settings["message_notvalid_username"];
+		$message_notvalid_email = $settings["message_notvalid_email"];
+		//New validation messages for membership number and postcode
+		$message_empty_member_no = $setting["message_empty_member_no"];
+		$message_empty_member_postcode = $setting["message_empty_member_postcode"];
+		$type = $settings["random_key_type"];
+		$len = $settings["random_key_length"];
+		if (empty($_POST['name'])) {
+			echo $message_empty_name;
+		} elseif (empty($_POST['email'])) {
+			echo $message_empty_email;
+		} elseif (empty($_POST['username'])) {
+			echo $message_empty_username;
+		} elseif (empty($_POST['member_no'])) {
+			echo $message_empty_member_no;
+		} elseif (empty($_POST['member_post_code'])) {
+			echo $message_empty_member_postcode;
+		} elseif (empty($_POST['password'])) {
+			echo $message_empty_password;
+		} elseif (empty($_POST['confirm_pass'])) {
+			echo $message_empty_password_confirm;
+		} elseif (($_POST['password']) != ($_POST['confirm_pass'])) {
+			echo $message_notvalid_password;
+		} else {
+			// Check for unique username
+			$PDO = Record::getConnection();
+			// Check User Table
+			$check_unique_username = "SELECT * FROM " . TABLE_PREFIX . "user WHERE username=:username";
+			$result = $PDO->prepare($check_unique_username);
+			$result->execute(array("username" => $username));
+			$count = $result->rowCount();
+			// Check Temp User Table
+			$check_unique_username_temp = "SELECT * FROM " . TABLE_PREFIX . "approved_users_temp WHERE username=:username";
+			$check_unique_username_temp = $PDO->prepare($check_unique_username_temp);
+			$check_unique_username_temp->execute(array("username" => $username));
+			$check_unique_username_temp = $check_unique_username_temp->rowCount();
+			if ($count == '1' || $check_unique_username_temp == '1') {
+				echo $message_notvalid_username;
+			} else {
+			// We want to make sure that email isn't already registered
+			global $__CMS_CONN__;
+			// Check in Main User Table
+			$check_unique_email = "SELECT * FROM " . TABLE_PREFIX . "user WHERE email=:email";
+			$result = $PDO->prepare($check_unique_email);
+			$result->execute(array("email" => $email));
+			$count = $result->rowCount();
+			// Check Temp User Table
+			$check_unique_email_temp = "SELECT * FROM " . TABLE_PREFIX . "approved_users_temp WHERE email=:email";
+			$check_unique_email_temp = $PDO->prepare($check_unique_email_temp);
+			$check_unique_email_temp->execute(array("email" => $email));
+			$check_unique_email_temp = $check_unique_email_temp->rowCount();
+			if ($count == 1 || $check_unique_email_temp == 1) {
+				echo $message_notvalid_email;
+			} else {
+			$common = new APCommon();
+			$random_key = $common->random_string($type, $len);
+			//$password = sha1($password);
+			$today = date('Y-m-d G:i:s');
+			//New code for fast registration
+			$frProcessed = 0;	//Default state for processed registration
+			$sql = "SELECT * FROM " . TABLE_PREFIX . "fast_register WHERE member_no=:member_no AND post_code=:post_code";
+			$PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$result = $PDO->prepare($sql);
+			$result->execute(array(
+			"member_no" => $member_no,
+			"post_code" => $member_post_code
+			));
+			$count = $result->rowCount();
+			if ($count >0) {
+				$frProcessed = 1;
+			}	
+			$sql = "INSERT INTO " . TABLE_PREFIX . "approved_users_temp (name, email, username, member_no, post_code, password, rand_key, reg_date, processed) VALUES (:name, :email, :username , :member_no, :post_code, :password, :random_key, :today, :processed)";
+			$PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$stmt = $PDO->prepare($sql);
+			$stmt->execute(array(
+			"name" => $name,
+			"email" => $email,
+			"username" => $username,
+			"member_no" => $member_no,
+			"post_code" => $member_post_code,
+			"password" => $password,
+			"random_key" => $random_key,
+			"today" => $today,
+			"processed" => $frProcessed
+			));
+			// This is where to insert fast registration..
+			if ($frProcessed == 1) {
+			 	$common->confirmation_email($email, $name);
+			}
+			$register_confirm_msg = $settings['register_confirm_msg'];
+			echo $register_confirm_msg;
+			}
+		}
+	}
+	} else {
+		$register_page = $settings['register_page'];
+		echo '<form id="registration" class="registration" action="' . URL_PUBLIC . '' . $register_page . '' . URL_SUFFIX . '" method="post">';
+		$ar = $settings['allow_registrations'];
+		$met = $settings['message_error_technical'];
+		$cm = $settings['closed_message'];
+		//$rf = $row['registration_form'];
+		$rf = new View('../../plugins/approved_users/views/registration');
+		// Check the registration status
+		if ($ar == '1') { // if registration is Open
+			echo $rf; // Show Registration Form
+			} elseif ($ar == '0') { // if registration is Closed
+				echo $cm; // Show Closed Shop Message - useful for testing with closed set of users
+			} else { // You will get this message if the allow_registration row in the registration_settings table value does not equal 1 (open) or 0 (closed)
+				echo $met;
+			}
+			echo '</form>';
+		}
+	}
+}
 
 
     function confirm() {
