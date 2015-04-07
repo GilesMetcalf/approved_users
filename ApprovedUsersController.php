@@ -141,24 +141,23 @@ class ApprovedUsersController extends PluginController {
 public function fastregisterload() {
 	$PDO = Record::getConnection();
 	$common = new APCommon();
-	$target_dir = "uploads/";
+	$target_dir = CMS_ROOT . "/public/uploads/";
 	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 	$uploadOk = 1;
-
+	Flash::set('success', $target_file);
+	
 	$row = 1;
 	if (($handle = fopen($target_file, "r")) !== FALSE) {
-		while (($data = fgetcsv($handle, 25, ",")) !== FALSE) {
+		$sql = "TRUNCATE " . TABLE_PREFIX . "fast_register";
+		$stmt = $PDO->prepare($sql);
+		$stmt->execute();	
+	while (($data = fgetcsv($handle, 25, ",")) !== FALSE) {
     			$num = count($data);
-    			if ($num > 0) {
-				$sql = "TRUNCATE " . TABLE_PREFIX . "fast_register";
-				$stmt = $PDO->prepare($sql);
-				$stmt->execute();	
-			}
     			$row++;
     			for ($c=0; $c < $num; $c++) {
-        			$sql = "INSERT INTO " . TABLE_PREFIX . "fast_register (member_no, post_code) VALUES ("{$data[0]}", "{$data[1]}")";
+        			$sql = "INSERT INTO " . TABLE_PREFIX . "fast_register (member_no, post_code) VALUES (:member_no, :post_code)";
 				$stmt = $PDO->prepare($sql);
-				$stmt->execute();	
+				$stmt->execute(array("member_no" => $data[0], "post_code" => $data[1]));	
     			}
 		}
 		Flash::set('success', __('Updates processed'));
@@ -166,7 +165,7 @@ public function fastregisterload() {
 		Flash::set('error', __('Unable to process updates'));
 	}
 	fclose($handle);
-	redirect(get_url('plugin/approved_users/approvals'));
+	redirect(get_url('plugin/approved_users/documentation'));
 }
 
 
