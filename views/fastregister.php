@@ -33,7 +33,7 @@ this is generated internally.
 </p>
 <p>&nbsp; </p>
 
-<form id="fastregisterload" action="<?php echo get_url('plugin/approved_users/fastregisterload/'); ?>" method="post" enctype="multipart/form-data">
+<form id="fastregisterload" action="<?php echo get_url('plugin/approved_users/fastregisterload/'); ?>" method="post">
 
     Enter filename to process:
     <input type="text" name="fileToUpload" id="fileToUpload"> 
