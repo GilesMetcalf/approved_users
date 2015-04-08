@@ -165,6 +165,8 @@ public function fastregisterload() {
 		Flash::set('error', __('Unable to process updates'));
 	}
 	fclose($handle);
+	//Delete the file once processed for security
+	unlink($target_file);
 	redirect(get_url('plugin/approved_users/documentation'));
 }
 
