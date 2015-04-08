@@ -143,7 +143,7 @@ public function fastregisterload() {
 		$PDO = Record::getConnection();
 		$common = new APCommon();
 		$target_dir = CMS_ROOT . "/public/uploads/";
-		$target_file = $target_dir . $_POST['fileToUpload'];
+		$target_file = $target_dir . basename($_POST['fileToUpload']);
 		$uploadOk = 1;
 
 		$row = 1;
