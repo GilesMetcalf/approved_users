@@ -70,8 +70,9 @@ return array(
     'Stay logged in' => 'Stay logged in',
     'Approvals processed' => 'Approvals processed',
     'Unable to process approvals' => 'Unable to process approvals',
-	'Load Fast Register' => 'Load Fast Register',
+    'Load Fast Register' => 'Load Fast Register',
     'Load FastRegister Database' => 'Load FastRegister Database',
     'Updates processed' => 'Updates processed',
-    'Unable to process updates' => 'Unable to process updates'
+    'Unable to process updates' => 'Unable to process updates',
+    'No file name entered' => 'No file name entered'
 );
