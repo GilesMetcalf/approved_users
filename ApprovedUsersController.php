@@ -139,34 +139,37 @@ class ApprovedUsersController extends PluginController {
 *
 **/
 public function fastregisterload() {
-	$PDO = Record::getConnection();
-	$common = new APCommon();
-	$target_dir = CMS_ROOT . "/public/uploads/";
-	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-	$uploadOk = 1;
-	Flash::set('success', $target_file);
-	
-	$row = 1;
-	if (($handle = fopen($target_file, "r")) !== FALSE) {
-		$sql = "TRUNCATE " . TABLE_PREFIX . "fast_register";
-		$stmt = $PDO->prepare($sql);
-		$stmt->execute();	
-	while (($data = fgetcsv($handle, 25, ",")) !== FALSE) {
-    			$num = count($data);
-    			$row++;
-    			for ($c=0; $c < $num; $c++) {
-        			$sql = "INSERT INTO " . TABLE_PREFIX . "fast_register (member_no, post_code) VALUES (:member_no, :post_code)";
-				$stmt = $PDO->prepare($sql);
-				$stmt->execute(array("member_no" => $data[0], "post_code" => $data[1]));	
-    			}
+	if (isset($_POST['fileToUpload'])) {
+		$PDO = Record::getConnection();
+		$common = new APCommon();
+		$target_dir = CMS_ROOT . "/public/uploads/";
+		$target_file = $target_dir . $_POST['fileToUpload'];
+		$uploadOk = 1;
+
+		$row = 1;
+		if (($handle = fopen($target_file, "r")) !== FALSE) {
+			$sql = "TRUNCATE " . TABLE_PREFIX . "fast_register";
+			$stmt = $PDO->prepare($sql);
+			$stmt->execute();	
+		while (($data = fgetcsv($handle, 25, ",")) !== FALSE) {
+    				$num = count($data);
+    				$row++;
+    				for ($c=0; $c < $num; $c++) {
+        				$sql = "INSERT INTO " . TABLE_PREFIX . "fast_register (member_no, post_code) VALUES (:member_no, :post_code)";
+					$stmt = $PDO->prepare($sql);
+					$stmt->execute(array("member_no" => $data[0], "post_code" => $data[1]));	
+    				}
+			}
+			Flash::set('success', __('Updates processed'));
+		} else {
+			Flash::set('error', __('Unable to process updates'));
 		}
-		Flash::set('success', __('Updates processed'));
+		fclose($handle);
+		//Delete the file once processed for security
+		unlink($target_file);
 	} else {
-		Flash::set('error', __('Unable to process updates'));
-	}
-	fclose($handle);
-	//Delete the file once processed for security
-	unlink($target_file);
+		Flash::set('error', __('No file name entered'));
+	}	
 	redirect(get_url('plugin/approved_users/documentation'));
 }
 
