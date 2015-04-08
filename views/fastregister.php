@@ -24,12 +24,14 @@
 <p>
 A CSV file of membership numbers and postcodes must be processed to populate the Fast Register database. 
 The CSV file must contain just two columns, the membership number and the postcode. No header row is required.
-</p><p>
+</p>
+<p>
 The file can be exported from Excel, generated from another database, or hand-built in a text editor. 
 The completed file must be uploaded to the "public/uploads" file area using Wolf administrative tools.
-</p><p>
+</p>
+<p>
 Use this  form to enter the name of the CSV file  to update the Fast Register database. Do not enter the path, as 
-this is generated internally.
+this is generated internally (anything you enter as a path will be ignored anyway!).
 </p>
 <p>&nbsp; </p>
 
@@ -43,4 +45,6 @@ this is generated internally.
 </form>
 
 <p>&nbsp; </p>
-<p><strong>Note:</strong> Very large files of data may take some time to process. Please be patient - you will be notified when it is complete!</p>
+<p><strong>Note:</strong> Very large files of data may take some time to process. 
+Please be patient - you will be notified when it is complete!
+</p>
