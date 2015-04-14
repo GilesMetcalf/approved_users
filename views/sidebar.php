@@ -29,5 +29,4 @@
     <h3><?php echo __('Approved Users'); ?></h3>
     <p><?php echo __('This plugin allows you to manage user registrations and approvals through your Wolf CMS site.'); ?></p>
     <p><?php echo __('It controls the administration of user groups as well as the front end elements of login, logout and registration forms.'); ?></p>
-    <p><a href="http://vanderkleijn.net/software/registered-users">http://vanderkleijn.net/software/registered-users</a></p>
 </div>
