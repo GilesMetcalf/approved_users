@@ -147,14 +147,19 @@ public function registration_page() {
 			$random_key = $common->random_string($type, $len);
 			//$password = sha1($password);
 			$today = date('Y-m-d G:i:s');
+			
 			//New code for fast registration
 			$frProcessed = 0;	//Default state for processed registration
+			//Strip whitespace from membership no and postcode for fast registration check
+			$member_no = preg_replace('/\s+/', '', $member_no);
+			$clean_member_post_code = preg_replace('/\s+/', '', $member_post_code);
+			
 			$sql = "SELECT * FROM " . TABLE_PREFIX . "fast_register WHERE member_no=:member_no AND post_code=:post_code";
 			$PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$result = $PDO->prepare($sql);
 			$result->execute(array(
 			"member_no" => $member_no,
-			"post_code" => $member_post_code
+			"post_code" => $clean_member_post_code
 			));
 			$count = $result->rowCount();
 			if ($count >0) {
