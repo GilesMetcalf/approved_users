@@ -152,7 +152,7 @@ public function registration_page() {
 			$frProcessed = 0;	//Default state for processed registration
 			//Strip whitespace from membership no and postcode for fast registration check
 			$member_no = preg_replace('/\s+/', '', $member_no);
-			$clean_member_post_code = preg_replace('/\s+/', '', $member_post_code);
+			$clean_member_post_code = preg_replace('/\s+/', '', strtoupper($member_post_code));
 			
 			$sql = "SELECT * FROM " . TABLE_PREFIX . "fast_register WHERE member_no=:member_no AND post_code=:post_code";
 			$PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
