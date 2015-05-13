@@ -4,7 +4,7 @@ APPROVED USERS
 
 By Giles Metcalf <giles@lughnasadh.com>
 
-Originally written by: 
+Original code by: 
   Andrew Waters <andrew@band-x.org>
   Martijn van der Kleijn <martijn.niji@gmail.com>
 
@@ -21,9 +21,21 @@ It adds the following tables to your wolf database:
 	permission_page
 	approved_users_settings
 	approved_users_temp
+	fast_register
 
 The administration tab is only available to Site Administrators by design.
 
+NOTES:
+=============
+
+As users register on the site, their details will be listed on the "Approvals" page for manual approval. 
+Ticking the "Approve" boxes for those users that can be approved, and finally clicking the "Approve" 
+button, will bulk approve all checked users, and send registration confirmation emails. Unapproved 
+registrants will remain on this list. A "Delete" option will be added at a later stage.
+
+A "fast registration" facility is built in to the system. This allows an Administrator to upload a 
+list of potential pre-approved users, so that when they do register, they are automatically approved 
+and a confirmation email sent without the need for manual approval.
 
 INSTRUCTIONS:
 =============
@@ -48,3 +60,9 @@ INSTRUCTIONS:
     select 'Login Required' from the drop down menu and then check the user
     types you'd like to give access to. Any groups not checked here will not be
     able to access the page.
+
+8.	To use the fast registration option, a CSV file of membership numbers and 
+	postcodes must be uploaded to the server (to the /public/files/uploads/ folder 
+	in the Wolf installation directory). The name of this file (no path!), is 
+	entered on the "Load Fast Register" tab, and the "Process FR file" button 
+	clicked to add the data to the database. This may take a few seconds, so be patient!	
